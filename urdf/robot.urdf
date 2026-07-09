@@ -44,7 +44,7 @@
         <parent link="base_link"/>
         <child link="fl_wheel"/>
         <origin xyz="0.15 0.175 -0.05" rpy="1.5708 0 0"/>
-        <axis xyz="0 0 1"/>
+        <axis xyz="0 0 -1"/>
     </joint>
 
     <link name="fr_wheel">
@@ -70,7 +70,7 @@
         <parent link="base_link"/>
         <child link="fr_wheel"/>
         <origin xyz="0.15 -0.175 -0.05" rpy="1.5708 0 0"/>
-        <axis xyz="0 0 1"/>
+        <axis xyz="0 0 -1"/>
     </joint>
 
     <link name="rl_wheel">
@@ -96,7 +96,7 @@
         <parent link="base_link"/>
         <child link="rl_wheel"/>
         <origin xyz="-0.15 0.175 -0.05" rpy="1.5708 0 0"/>
-        <axis xyz="0 0 1"/>
+        <axis xyz="0 0 -1"/>
     </joint>
 
     <link name="rr_wheel">
@@ -122,7 +122,7 @@
         <parent link="base_link"/>
         <child link="rr_wheel"/>
         <origin xyz="-0.15 -0.175 -0.05" rpy="1.5708 0 0"/>
-        <axis xyz="0 0 1"/>
+        <axis xyz="0 0 -1"/>
     </joint>
 
     <link name="pillar_fl">
@@ -302,4 +302,30 @@
         <origin xyz="0 0 0.07" rpy="0 0 0"/>
     </joint>
 
+    <gazebo>
+        <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+            <left_joint>
+                fl_joint
+            </left_joint>
+            <left_joint>
+                rl_joint
+            </left_joint>
+            <right_joint>
+                fr_joint
+            </right_joint>
+            <right_joint>
+                rr_joint
+            </right_joint>
+            
+            <wheel_separation>
+                0.35
+            </wheel_separation>
+            <wheel_radius>
+                0.08
+            </wheel_radius>
+            <topic>
+                /cmd_vel
+            </topic>
+        </plugin>
+    </gazebo>
 </robot>
