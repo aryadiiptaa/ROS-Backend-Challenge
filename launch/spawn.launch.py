@@ -18,7 +18,14 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': robot_desc}]
+        parameters=[{'robot_description': robot_desc, 'use_sim_time': True}]
+    )
+
+    joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        parameters=[{'robot_description': robot_desc, 'use_sim_time': True}]
     )
 
     gazebo = IncludeLaunchDescription(
@@ -43,6 +50,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         robot_state_publisher,
+        joint_state_publisher,
         gazebo,
         spawn_robot
     ])
