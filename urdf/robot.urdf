@@ -6,6 +6,7 @@
         <child link="base_link"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
+
     <link name="base_link">
         <visual>
             <geometry>
@@ -51,7 +52,6 @@
         <origin xyz="0.15 0.175 -0.05" rpy="1.5708 0 0"/>
         <axis xyz="0 0 -1"/>
     </joint>
-
     <link name="fr_wheel">
         <visual>
             <geometry>
@@ -77,7 +77,6 @@
         <origin xyz="0.15 -0.175 -0.05" rpy="1.5708 0 0"/>
         <axis xyz="0 0 -1"/>
     </joint>
-
     <link name="rl_wheel">
         <visual>
             <geometry>
@@ -103,7 +102,6 @@
         <origin xyz="-0.15 0.175 -0.05" rpy="1.5708 0 0"/>
         <axis xyz="0 0 -1"/>
     </joint>
-
     <link name="rr_wheel">
         <visual>
             <geometry>
@@ -154,7 +152,6 @@
         <child link="pillar_fl"/>
         <origin xyz="0.15 0.12 0.125" rpy="0 0 0"/>
     </joint>
-
     <link name="pillar_fr">
         <visual>
             <geometry>
@@ -179,7 +176,6 @@
         <child link="pillar_fr"/>
         <origin xyz="0.15 -0.12 0.125" rpy="0 0 0"/> 
     </joint>
-
     <link name="pillar_rl">
         <visual>
             <geometry>
@@ -204,7 +200,6 @@
         <child link="pillar_rl"/>
         <origin xyz="-0.15 0.12 0.125" rpy="0 0 0"/>
     </joint>
-
     <link name="pillar_rr">
         <visual>
             <geometry>
@@ -229,7 +224,6 @@
         <child link="pillar_rr"/>
         <origin xyz="-0.15 -0.12 0.125" rpy="0 0 0"/> 
     </joint>
-
     <link name="top_deck">
         <visual>
             <geometry>
@@ -254,35 +248,36 @@
         <child link="top_deck"/>
         <origin xyz="0 0 0.185" rpy="0 0 0"/>
     </joint>
+
     <link name="imu_link">
         <visual>
             <geometry>
                 <box size="0.04 0.04 0.02"/>
-                </geometry>
-                <material name="red">
-                    <color rgba="1 0 0 1"/>
-                </material>
-            </visual>
-            <inertial>
-                <mass value="0.1"/>
-                <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
-            </inertial>
-        </link>
-        <joint name="imu_joint" type="fixed">
-            <parent link="base_link"/>
-            <child link="imu_link"/>
-            <origin xyz="0 0 0.085" rpy="0 0 0"/>
-        </joint>
-        <link name="gps_link">
-            <visual>
-                <geometry>
-                    <cylinder radius="0.03" length="0.02"/>
-                </geometry>
-                <material name="green">
-                    <color rgba="0 1 0 1"/>
-                </material>
-            </visual>
-        </link>
+            </geometry>
+            <material name="red">
+                <color rgba="1 0 0 1"/>
+            </material>
+        </visual>
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+    <joint name="imu_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="imu_link"/>
+        <origin xyz="0 0 0.085" rpy="0 0 0"/>
+    </joint>
+    <link name="gps_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.03" length="0.02"/>
+            </geometry>
+            <material name="green">
+                <color rgba="0 1 0 1"/>
+            </material>
+        </visual>
+    </link>
     <joint name="gps_joint" type="fixed">
         <parent link="top_deck"/>
         <child link="gps_link"/>
@@ -294,7 +289,7 @@
             <geometry>
                 <cylinder radius="0.06" length="0.12"/>
             </geometry>
-            <material name="cyan_terang">
+            <material name="cyan">
                 <color rgba="0.0 1.0 1.0 1.0"/> 
             </material>
         </visual>
@@ -315,7 +310,8 @@
     </joint>
 
     <gazebo>
-        <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+        <plugin filename="gz-sim-diff-drive-system"
+            name="gz::sim::systems::DiffDrive">
             <left_joint>
                 fl_joint
             </left_joint>
@@ -328,23 +324,24 @@
             <right_joint>
                 rr_joint
             </right_joint>
+
             <wheel_separation>
-                0.45
-            </wheel_separation> 
-            <wheel_radius>
+                0.35
+            </wheel_separation>
+            <wheel_radius> 
                 0.08
             </wheel_radius>
             <topic>
                 /cmd_vel
             </topic>
-            <publish_wheel_tf>
-                true
-            </publish_wheel_tf>
-            <publish_odom_tf>
-                true
-            </publish_odom_tf> 
+            <odom_topic>
+                /odom
+            </odom_topic>
+            <tf_topic>
+                /model/challenge_rover/tf
+            </tf_topic>
             <odom_publish_frequency>
-                30
+                40
             </odom_publish_frequency>
             <frame_id>
                 odom
@@ -367,7 +364,7 @@
                 /scan
             </topic>
             <update_rate>
-                10
+                8
             </update_rate>
             <ray>
                 <scan>
@@ -406,13 +403,30 @@
             </visualize>
         </sensor>
     </gazebo>
+
+    <gazebo reference="imu_link">
+        <sensor name="imu_sensor" type="imu">
+            <always_on>
+                true
+            </always_on>
+            <update_rate>
+                50
+            </update_rate>
+            <topic>
+                /imu
+            </topic>
+            <gz_frame_id>
+                imu_link
+            </gz_frame_id>
+        </sensor>
+    </gazebo>
     
     <gazebo reference="fl_wheel">
         <mu1>
             0.8
         </mu1>
         <mu2>
-            0.5
+            0.10
         </mu2>
         <fdir1>
             1 0 0
@@ -427,7 +441,7 @@
             0.8
         </mu1>
         <mu2>
-            0.5
+            0.10
         </mu2>
         <fdir1>
             1 0 0
@@ -442,7 +456,7 @@
             0.8
         </mu1>
         <mu2>
-            0.5
+            0.10
         </mu2>
         <fdir1>
             1 0 0
@@ -457,7 +471,7 @@
             0.8
         </mu1>
         <mu2>
-            0.5
+            0.10
         </mu2>
         <fdir1>
             1 0 0
@@ -467,20 +481,25 @@
         </minDepth>
     </gazebo>
 
-    <gazebo reference="imu_link">
-        <sensor name="imu_sensor" type="imu">
-            <always_on>
-                true
-            </always_on>
-            <update_rate>
-                100
-            </update_rate>
+    <gazebo>
+        <plugin
+            filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher">
             <topic>
-                /imu
+                /joint_states
             </topic>
-            <gz_frame_id>
-                imu_link
-            </gz_frame_id>
-        </sensor>
+            <joint_name>
+                fl_joint
+            </joint_name>
+            <joint_name>
+                fr_joint
+            </joint_name>
+            <joint_name>
+                rl_joint
+            </joint_name>
+            <joint_name>
+                rr_joint
+            </joint_name>
+        </plugin>
     </gazebo>
 </robot>
